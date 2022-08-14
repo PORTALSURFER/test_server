@@ -1,19 +1,30 @@
+use std::env;
+
+use actix_web::{web, App, HttpServer};
+use log::info;
+use tokio::{task, time};
+
 use crate::server::Server;
 
 mod server;
 
-#[tokio::main]
+#[actix_web::main]
 async fn main() {
+    //set info var for logging
+    env::set_var("RUST_LOG", "test_server=info");
+    pretty_env_logger::init();
+
+    info!("Starting kitten");
+
     let server = Server::new();
 
-    server.start().await.expect("Failed to start server.");
+    let local = task::LocalSet::new();
 
-    somethingelse().await;
-
-    println!("Hello, world!");
+    local.spawn_local(async move { server.start().await });
+    local.spawn_local(async move { startUI().await });
+    local.await;
 }
 
-async fn somethingelse() {
-    println!("YO")
+async fn startUI() {
+    info!("Starting User Interface..");
 }
-k

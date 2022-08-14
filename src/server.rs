@@ -1,5 +1,7 @@
 use actix_web::{web, App, HttpServer};
+use log::info;
 
+#[derive(Debug)]
 pub struct Server {}
 
 pub mod handlers {
@@ -16,7 +18,7 @@ impl Server {
     }
 
     pub async fn start(self) -> std::io::Result<()> {
-        println!("Starting server...");
+        info!("Starting server...");
 
         HttpServer::new(move || App::new().route("/", web::get().to(handlers::index)))
             .bind(("127.0.0.1", 8080))?
