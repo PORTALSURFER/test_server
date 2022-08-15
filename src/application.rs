@@ -8,6 +8,8 @@ pub struct Kitten {
 
 impl Kitten {
     pub fn new(cc: &eframe::CreationContext<'_>, shared_data: Arc<Mutex<SharedData>>) -> Self {
+        cc.egui_ctx.set_visuals(egui::Visuals::dark());
+
         Self {
             data: shared_data.clone(),
         }
