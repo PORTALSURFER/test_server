@@ -12,9 +12,9 @@ pub mod handlers {
     use std::sync::Mutex;
 
     pub async fn index(data: web::Data<Mutex<SharedData>>) -> impl Responder {
-        let mut counter = data.lock().unwrap().counter;
-        counter += 1;
-        format!("Request number: {}", &counter)
+        let mut shared_data = data.lock().unwrap();
+        shared_data.counter += 1;
+        format!("Request number: {}", &shared_data.counter)
     }
 }
 
