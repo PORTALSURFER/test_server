@@ -4,6 +4,7 @@ use actix_web::{
     App, HttpServer,
 };
 use log::info;
+use openssl::ssl::{SslAcceptor, SslMethod, SslFiletype};
 use std::sync::{Arc, Mutex};
 
 pub mod handlers {
@@ -31,12 +32,18 @@ impl Server {
 
         let data = Data::from(shared_data);
 
+        let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+        builder
+            .set_private_key_file("key.pem", SslFiletype::PEM)
+            .unwrap();
+        builder.set_certificate_chain_file("cert.pen").unwrap();
+
         HttpServer::new(move || {
             App::new()
                 .app_data(data.clone())
                 .route("/", web::get().to(handlers::index))
         })
-        .bind(("127.0.0.1", 8080))?
+        .bind_openssl("127.0.0.1:8080", builder)?
         .run()
         .await
     }
